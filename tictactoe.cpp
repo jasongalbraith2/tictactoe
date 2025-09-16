@@ -7,7 +7,7 @@ const unsigned int COLS = 3;
 // Function to print out the board
 void printBoard(char** positions) {
   // Clear screen and print header
-  //std::cout << "\033[H\033[J    A | B | C \n";
+  std::cout << "\033[H\033[J    A | B | C \n";
 
   // Print rows
   for (int i = 0; i < ROWS; ++i) {
@@ -75,10 +75,10 @@ bool check_for_win(char** positions) {
 
   // Right up to left down (RU-LD)
   match = true;
-  initialChar = positions[ROWS - 1][0];
+  initialChar = positions[0][2];
   if (initialChar != ' ') {
-    for (int i = ROWS - 2; i >= 0; --i) {
-      if (initialChar != positions[i][i]) {
+    for (int i = 1; i < ROWS; ++i) {
+      if (initialChar != positions[i][COLS-1-i]) {
 	match = false;
       }
     }
@@ -131,7 +131,7 @@ int main() {
       columnChoice = std::tolower(toPlace[0]) - 'a';
       rowChoice = toPlace[1] - '0';
       if (columnChoice > 2 or rowChoice > 2) {
-	std::cout << "\nInvalid column or row choice. Please try again. (press any key to continue)\n";
+	std::cout << "\nInvalid column or row choice. Please try again. (press ENTER to continue)\n";
 	std::cin.ignore(10000, '\n');
 	std::cin.get();
       }
@@ -139,7 +139,7 @@ int main() {
 	
 	// Now, check to see if the space is already taken
 	if (positions[rowChoice][columnChoice] != ' ') {
-	  std::cout << "\nYour selection is already filled, try another spot. (press any key to continue)\n";
+	  std::cout << "\nYour selection is already filled, try another spot. (press ENTER to continue)\n";
 	  std::cin.ignore(10000, '\n');
 	  std::cin.get();
 	}
@@ -160,6 +160,9 @@ int main() {
 	    std::cout << "CONGRATULATIONS TO " << ((player1) ? "PLAYER 1" : "PLAYER 2") << "!!!\n";
 	    std::cout << "Player 1 has " << player1Wins << " wins and Player 2 has " << player2Wins << "!\n";
 	  }
+	  else if (check_for_draw(positions)) {
+	    std::cout << "Both players have drawn.\n";
+	  }
 	  else {
 	    player1 = not player1;
 	  }
@@ -171,6 +174,12 @@ int main() {
     std::cin >> playAgain;
     if (playAgain != 'y') {
       running = false;
+    }
+
+    for (int i = 0; i < ROWS; ++i) {
+      for (int j = 0; j < COLS; ++j) {
+	positions[i][j] = ' ';
+      }
     }
   }
 
